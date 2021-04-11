@@ -2,10 +2,10 @@
 
 Lexer::Lexer(string src)
 {
-	this->src = src;
+    this->src = src;
 }
 
 void Lexer::nextToken()
 {
-	cout << src << endl;
+    cout << src << endl;
 }

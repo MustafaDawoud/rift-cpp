@@ -6,11 +6,11 @@ using namespace std;
 
 class Lexer 
 {
-	private:
-		string src;
-		unordered_map<string, string> reservedWords;
+    private:
+        string src;
+        unordered_map<string, string> reservedWords;
 
-	public:
-		Lexer(string src);
-		void nextToken();
+    public:
+        Lexer(string src);
+        void nextToken();
 };
