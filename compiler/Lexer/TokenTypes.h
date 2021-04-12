@@ -1,4 +1,8 @@
-enum TokenType {
+enum LexToken {
+    //EOF Token
+    EOF_GOOD,
+    EOF_BAD,
+
     // KEYWORDS
     FUNC,
     STRUCT,

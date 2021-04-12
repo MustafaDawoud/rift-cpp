@@ -29,15 +29,20 @@ int main(int argc, char *argv[])
     }
 
     Lexer lex(src);
-    Token nextToken = lex.nextToken();
+    LexToken nextToken = lex.nextToken();
 
-    vector<Token> tokenList;
+    vector<LexToken> tokenList;
     tokenList.push_back(nextToken);
 
-    while(nextToken != EOF)
+    while(nextToken != ::EOF_GOOD && nextToken != ::EOF_BAD)
     {
         tokenList.push_back(nextToken);
         nextToken = lex.nextToken();
+    }
+
+    if(nextToken == ::EOF_BAD)
+    {
+        cout << "Something went wrong in lexer" << endl;
     }
 
     return 0;

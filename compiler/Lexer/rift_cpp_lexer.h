@@ -1,6 +1,6 @@
 #include <iostream>
 #include <unordered_map>
-#include "TokenType.h"
+#include "TokenTypes.h"
 
 using namespace std;
 
@@ -8,9 +8,9 @@ class Lexer
 {
     private:
         string src;
-        unordered_map<string, string> reservedWords;
+        static unordered_map<string, LexToken> reservedWords;
 
     public:
         Lexer(string src);
-        Token nextToken();
+        LexToken nextToken();
 };
