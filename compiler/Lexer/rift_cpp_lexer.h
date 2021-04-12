@@ -12,5 +12,5 @@ class Lexer
 
     public:
         Lexer(string src);
-        void nextToken();
+        Token nextToken();
 };

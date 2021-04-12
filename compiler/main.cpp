@@ -1,5 +1,7 @@
-#include "Lexer/rift_cpp_lexer.h"
 #include <fstream>
+#include "Lexer/rift_cpp_lexer.h"
+#include <vector>
+
 using namespace std;
 
 int main(int argc, char *argv[])
@@ -27,7 +29,16 @@ int main(int argc, char *argv[])
     }
 
     Lexer lex(src);
-    lex.nextToken();
+    Token nextToken = lex.nextToken();
+
+    vector<Token> tokenList;
+    tokenList.push_back(nextToken);
+
+    while(nextToken != EOF)
+    {
+        tokenList.push_back(nextToken);
+        nextToken = lex.nextToken();
+    }
 
     return 0;
 }

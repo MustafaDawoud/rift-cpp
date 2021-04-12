@@ -5,7 +5,8 @@ Lexer::Lexer(string src)
     this->src = src;
 }
 
-void Lexer::nextToken()
+Token Lexer::nextToken()
 {
     cout << src << endl;
+    return NULL;
 }
