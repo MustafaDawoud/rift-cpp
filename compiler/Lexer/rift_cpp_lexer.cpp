@@ -8,5 +8,5 @@ Lexer::Lexer(string src)
 LexToken Lexer::nextToken()
 {
     cout << src << endl;
-    return ::FUNC;
+    return LexToken(0,0,"");
 }

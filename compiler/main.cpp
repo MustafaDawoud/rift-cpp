@@ -10,7 +10,7 @@ int main(int argc, char *argv[])
     //TODO: Batch file reads instead of reading the entire file in one string
 
     //Print error message if file name is missing, TODO add flags
-    if(argc  <= 1)
+    if(argc <= 1)
     {
         cout << "File name is missing." << endl;
         return 1;
@@ -34,13 +34,13 @@ int main(int argc, char *argv[])
     vector<LexToken> tokenList;
     tokenList.push_back(nextToken);
 
-    while(nextToken != ::EOF_GOOD && nextToken != ::EOF_BAD)
+    while(nextToken.getLexTokenType() != LexTokenTypes::EOF_GOOD && nextToken.getLexTokenType() != LexTokenTypes::EOF_BAD)
     {
         tokenList.push_back(nextToken);
         nextToken = lex.nextToken();
     }
 
-    if(nextToken == ::EOF_BAD)
+    if(nextToken.getLexTokenType() == LexTokenTypes::EOF_BAD)
     {
         cout << "Something went wrong in lexer" << endl;
     }
