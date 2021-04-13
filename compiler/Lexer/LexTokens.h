@@ -78,14 +78,9 @@ class LexToken
         static const unordered_map<string, LexTokenTypes> reservedWordsAndSymbols;
 
     public:
-        LexToken(int line, int col, string value)
-        {
-            this->pos(line, col);
-            this->type = reservedWordsAndSymbols[value];
-            this->value = value;
-        }
-        LexTokenTypes getLexTokenType() { return this->type; }
-        pair<int,int> getPosition() { return this->pos; }
+        LexToken(int line, int col, string value);
+        LexTokenTypes getLexTokenType();
+        pair<int,int> getPosition();
 };
 
 const unordered_map<string, LexTokenTypes> LexToken::reservedWordsAndSymbols = 
