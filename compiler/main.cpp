@@ -9,7 +9,8 @@ int main(int argc, char *argv[])
     //TODO: Add command to run compiler using riftcpp.
     //TODO: Batch file reads instead of reading the entire file in one string
 
-    //Print error message if file name is missing, TODO add flags
+    //Print error message if file name is missing
+    //TODO add flags
     if(argc <= 1)
     {
         cout << "File name is missing." << endl;
@@ -29,21 +30,7 @@ int main(int argc, char *argv[])
     }
 
     Lexer lex(src);
-    LexToken nextToken = lex.nextToken();
-
-    vector<LexToken> tokenList;
-    tokenList.push_back(nextToken);
-
-    while(nextToken.getLexTokenType() != LexTokenTypes::EOF_GOOD && nextToken.getLexTokenType() != LexTokenTypes::EOF_BAD)
-    {
-        tokenList.push_back(nextToken);
-        nextToken = lex.nextToken();
-    }
-
-    if(nextToken.getLexTokenType() == LexTokenTypes::EOF_BAD)
-    {
-        cout << "Something went wrong in lexer" << endl;
-    }
-
+    vector<LexToken> tokenList = lex.getListOfTokens();
+    
     return 0;
 }
