@@ -8,7 +8,7 @@ rift_cpp_lexer.o: Lexer/rift_cpp_lexer.cpp Lexer/rift_cpp_lexer.h
 	g++ -std=c++11 -c Lexer/rift_cpp_lexer.cpp
 
 LexTokens.o: Lexer/LexTokens.cpp Lexer/LexTokens.h
-    g++ -std=c++11 -c Lexer/LexTokens.cpp
+	g++ -std=c++11 -c Lexer/LexTokens.cpp
 
 clean:
 	rm *.o rift

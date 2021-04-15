@@ -71,15 +71,19 @@ enum LexTokenTypes {
 class LexToken
 {
     private:
-        pair<int,int> pos;
+        int line, col;
         LexTokenTypes type;
         string value;
 
+    public:
         static const unordered_map<string, LexTokenTypes> reservedWordsAndSymbols;
 
-    public:
+        //Constructor
         LexToken(int line, int col, string value);
-        LexTokenTypes getLexTokenType();
-        pair<int,int> getPosition();
+
+        int getLine();
+        int getColumn();
+        string getValue();
+        LexTokenTypes getType();
 };
 

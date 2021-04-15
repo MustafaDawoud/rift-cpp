@@ -1,5 +1,6 @@
 #include "rift_cpp_lexer.h"
 
+using namespace std;
 
 //Public
 
@@ -15,7 +16,7 @@ Lexer::Lexer(string src)
 //Return listOfTokens
 vector<LexToken> Lexer::getListOfTokens()
 {
-    return this->listOfTokens;
+    return listOfTokens;
 }
 
 //************************************************************************************************
@@ -23,10 +24,16 @@ vector<LexToken> Lexer::getListOfTokens()
 //************************************************************************************************
 
 //Returns next token for iteration.
-LexToken Lexer::nextToken()
+LexToken Lexer::nextToken(int line, int col)
 {
-    cout << src << endl;
-    return LexToken(0,0,"");
+    
+    for(int i = 0; i < src.length(); i++)
+    {
+        line += 1; col += 1;
+        cout << src[i] << endl;
+    }
+
+    return LexToken(line,col,"func");
 }
 
 //----------------------------
@@ -34,25 +41,21 @@ LexToken Lexer::nextToken()
 //----------------------------
 void Lexer::createLexerTokens()
 {
-    //Handle errors in here
-    /*
-    LexToken nextToken = lex.nextToken();
-    LexTokenTypes tokenType = nextToken.getLexTokenType();
-
-    vector<LexToken> tokenList;
-    tokenList.push_back(nextToken);
-
-    while(tokenType != LexTokenTypes::EOF_GOOD && tokenType != LexTokenTypes::EOF_BAD)
+    LexToken next = nextToken(0,0);
+    listOfTokens.push_back(next);
+    
+    while(next.getType() != LexTokenTypes::EOF_GOOD && next.getType() != LexTokenTypes::EOF_BAD)
     {
-        tokenList.push_back(nextToken);
-        nextToken = lex.nextToken();
-        tokenType = nextToken.getLexTokenType();
+        cout << "ROW AND COLUMN!!!!!!!!!!!!!!!!!" << next.getLine() << ", " << next.getColumn() << endl; break;
+        next = nextToken(next.getLine(), next.getColumn());
+        listOfTokens.push_back(next);
     }
 
-    if(nextToken.getLexTokenType() == LexTokenTypes::EOF_BAD)
+    //Handle errors in here
+    if(next.getType() == LexTokenTypes::EOF_BAD)
     {
         cout << "Something went wrong in lexer" << endl;
     }
-    */
+
 }
 

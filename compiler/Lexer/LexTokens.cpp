@@ -61,12 +61,15 @@ const unordered_map<string, LexTokenTypes> LexToken::reservedWordsAndSymbols =
 
 LexToken::LexToken(int line, int col, string value)
 {
-    //Position p(line, col);
-    //this->pos = p;
-    //this->type =  //reservedWordsAndSymbols[value];
-    //this->value = value;
+    this->line = line;
+    this->col = col;
+    this->value = value;
+    type =  reservedWordsAndSymbols[value];
 }
 
-LexTokenTypes LexToken::getLexTokenType() { return this->type; }
+int LexToken::getLine() { return line; }
+int LexToken::getColumn() { return col; }
+string LexToken::getValue() { return value; }
+LexTokenTypes LexToken::getType() { return type; }
 
-pair<int,int> LexToken::getPosition() { return this->pos; }
+//pair<int,int> LexToken::getPosition() { return pos; }

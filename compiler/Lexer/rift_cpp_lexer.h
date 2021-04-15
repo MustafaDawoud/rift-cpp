@@ -12,7 +12,7 @@ class Lexer
         vector<LexToken> listOfTokens;
 
         //Functions
-        LexToken nextToken();
+        LexToken nextToken(int, int);
         void createLexerTokens();
 
     public:
