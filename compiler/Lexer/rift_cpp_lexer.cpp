@@ -2,7 +2,9 @@
 
 using namespace std;
 
+//************************************************************************************************
 //Public
+//************************************************************************************************
 
 //Constructor
 //Params: string src - input source file
@@ -10,30 +12,86 @@ using namespace std;
 Lexer::Lexer(string src)
 {
     this->src = src;
+    index = 0;
     createLexerTokens();
 }
 
 //Return listOfTokens
-vector<LexToken> Lexer::getListOfTokens()
+const vector<tuple<int,int,int,LexTokenType,string>> Lexer::getSrcTokens()
 {
-    return listOfTokens;
+    return srcTokens;
 }
 
 //************************************************************************************************
 //Private
 //************************************************************************************************
 
-//Returns next token for iteration.
-LexToken Lexer::nextToken(int line, int col)
-{
-    
-    for(int i = 0; i < src.length(); i++)
-    {
-        line += 1; col += 1;
-        cout << src[i] << endl;
-    }
+unordered_map<string, LexTokenType> Lexer::reservedWordsAndSymbols = 
+     // EOF TOKENS
+     {{"EOF_GOOD", LexTokenType::EOF_GOOD},
+     {"EOF_BAD", LexTokenType::EOF_BAD},
+     
+     // KEYWORDS
+     {"func", LexTokenType::FUNC},
+     {"struct", LexTokenType::STRUCT},
+     {"sig", LexTokenType::SIG},
+     {"impl", LexTokenType::IMPL},
+     {"with", LexTokenType::WITH},
+     {"field", LexTokenType::FIELD},
+     {"method", LexTokenType::METHOD},
+     {"self", LexTokenType::SELF},
+     {"new", LexTokenType::NEW},
+     {"let", LexTokenType::LET},
+     {"in", LexTokenType::IN},
+     {"if", LexTokenType::IF},
+     {"then", LexTokenType::THEN},
+     {"else", LexTokenType::ELSE},
+     {"while", LexTokenType::WHILE},
+     {"return", LexTokenType::RETURN},
+     {"break", LexTokenType::BREAK},
+     {"continue", LexTokenType::CONTINUE},
+     {"nil", LexTokenType::NIL},
+     {"true", LexTokenType::TRUE},
+     {"false", LexTokenType::FALSE},
 
-    return LexToken(line,col,"func");
+     // SEPARATORS
+     {"{", LexTokenType::L_CURLY_BRACE},
+     {"}", LexTokenType::R_CURLY_BRACE},
+     {";", LexTokenType::SEMI_COLON},
+     {",", LexTokenType::COMMA},
+     {":", LexTokenType::COLON},
+
+     // OPERATORS
+     {"[", LexTokenType::L_BRACKET},
+     {"]", LexTokenType::R_BRACKET},
+     {"(", LexTokenType::L_BRACE},
+     {")", LexTokenType::R_BRACE},
+     {".", LexTokenType::DOT},
+     {"+", LexTokenType::ADD},
+     {"-", LexTokenType::SUB},
+     {"*", LexTokenType::MUL},
+     {"/", LexTokenType::DIV},
+     {"%", LexTokenType::MOD},
+     {"!", LexTokenType::NOT},
+     {"<", LexTokenType::LT},
+     {"<=", LexTokenType::LQ},
+     {">", LexTokenType::GT},
+     {">=", LexTokenType::GQ},
+     {"==", LexTokenType::EQ},
+     {"!=", LexTokenType::NEQ},
+     {"&&", LexTokenType::AND},
+     {"||", LexTokenType::OR},
+     {"=", LexTokenType::ASSIGN},
+     {"->", LexTokenType::ARROW}
+};
+
+//Character advance
+
+//Returns next token for iteration.
+tuple<int,int,int,LexTokenType,string> Lexer::nextToken(int line, int col)
+{
+
+    return make_tuple(index, line, col, reservedWordsAndSymbols["func"], "func");//LexToken(index,line,col,"func");
 }
 
 //----------------------------
@@ -41,18 +99,17 @@ LexToken Lexer::nextToken(int line, int col)
 //----------------------------
 void Lexer::createLexerTokens()
 {
-    LexToken next = nextToken(0,0);
-    listOfTokens.push_back(next);
+    tuple<int,int,int,LexTokenType,string> next = nextToken(0,0);
+    srcTokens.push_back(next);
     
-    while(next.getType() != LexTokenTypes::EOF_GOOD && next.getType() != LexTokenTypes::EOF_BAD)
+    while(get<3>(next) != LexTokenType::EOF_GOOD && get<3>(next) != LexTokenType::EOF_BAD)
     {
-        cout << "ROW AND COLUMN!!!!!!!!!!!!!!!!!" << next.getLine() << ", " << next.getColumn() << endl; break;
-        next = nextToken(next.getLine(), next.getColumn());
-        listOfTokens.push_back(next);
+        next = nextToken(get<1>(next), get<2>(next));
+        srcTokens.push_back(next);
     }
 
     //Handle errors in here
-    if(next.getType() == LexTokenTypes::EOF_BAD)
+    if(get<3>(next) == LexTokenType::EOF_BAD)
     {
         cout << "Something went wrong in lexer" << endl;
     }

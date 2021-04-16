@@ -1,6 +1,7 @@
 #include <fstream>
 #include "Lexer/rift_cpp_lexer.h"
 #include <vector>
+#include <tuple>
 
 using namespace std;
 
@@ -30,7 +31,7 @@ int main(int argc, char *argv[])
     }
 
     Lexer lex(src);
-    vector<LexToken> tokenList = lex.getListOfTokens();
+    vector<tuple<int,int,int,LexTokenType,string>> tokenList = lex.getSrcTokens();
     
     return 0;
 }
