@@ -1,6 +1,6 @@
 #include "LexTokens.h"
 
-const unordered_map<string, LexTokenTypes> LexToken::reservedWordsAndSymbols = 
+unordered_map<string, LexTokenTypes> LexToken::reservedWordsAndSymbols = 
      // EOF TOKENS
      {{"EOF_GOOD", LexTokenTypes::EOF_GOOD},
      {"EOF_BAD", LexTokenTypes::EOF_BAD},
@@ -67,9 +67,8 @@ LexToken::LexToken(int line, int col, string value)
     type =  reservedWordsAndSymbols[value];
 }
 
-int LexToken::getLine() { return line; }
-int LexToken::getColumn() { return col; }
-string LexToken::getValue() { return value; }
-LexTokenTypes LexToken::getType() { return type; }
+const int LexToken::getLine() { return line; }
+const int LexToken::getColumn() { return col; }
+const string LexToken::getValue() { return value; }
+const LexTokenTypes LexToken::getType() { return type; }
 
-//pair<int,int> LexToken::getPosition() { return pos; }

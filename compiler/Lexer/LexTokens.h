@@ -76,14 +76,14 @@ class LexToken
         string value;
 
     public:
-        static const unordered_map<string, LexTokenTypes> reservedWordsAndSymbols;
+        static unordered_map<string, LexTokenTypes> reservedWordsAndSymbols;
 
         //Constructor
         LexToken(int line, int col, string value);
 
-        int getLine();
-        int getColumn();
-        string getValue();
-        LexTokenTypes getType();
+        const int getLine();
+        const int getColumn();
+        const string getValue();
+        const LexTokenTypes getType();
 };
 
