@@ -1,5 +1,5 @@
 #include <fstream>
-#include "Lexer/rift_cpp_lexer.h"
+#include "Lexer/Lexer.h"
 #include <vector>
 #include <tuple>
 

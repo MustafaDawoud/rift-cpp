@@ -2,7 +2,6 @@
 #include <vector>
 #include <unordered_map>
 #include <tuple>
-//#include "LexTokens.h"
 
 using namespace std;
 
@@ -72,19 +71,22 @@ enum LexTokenType {
 
 class Lexer 
 {
+    //public: class LexToken : tuple<int,int,int,LexTokenType,string>{};
     private:
         //Atributes
-        int index;
+        int index, line, col;
         string src;
-        vector<tuple<int,int,int,LexTokenType,string>>srcTokens; //index, line, col, token type, string value
+        vector<tuple<int,int,int,LexTokenType,string>> srcTokens; //index, line, col, token type, string value
         static unordered_map<string, LexTokenType> reservedWordsAndSymbols;
 
         //Functions
-        tuple<int,int,int,LexTokenType,string> nextToken(int, int);
+        tuple<int,int,int,LexTokenType,string> nextToken();
         void createLexerTokens();
+        bool isEnd();
+        char advance();
 
     public:
         Lexer(string src);
         const vector<tuple<int,int,int,LexTokenType,string>> getSrcTokens();
-
+        //const toString(); const toString(int); For error handling
 };

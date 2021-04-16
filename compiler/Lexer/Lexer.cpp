@@ -1,4 +1,4 @@
-#include "rift_cpp_lexer.h"
+#include "Lexer.h"
 
 using namespace std;
 
@@ -85,13 +85,57 @@ unordered_map<string, LexTokenType> Lexer::reservedWordsAndSymbols =
      {"->", LexTokenType::ARROW}
 };
 
+bool Lexer::isEnd() { return index >= src.length(); }
+
 //Character advance
+char Lexer::advance()
+{
+    if(isEnd())
+    {
+        return '\0';
+    }
+
+    char c = src[index++];
+
+    while(true)
+    {
+        if(isEnd())
+        {
+            return '\0';
+        }
+        if(c == '\n')
+        {
+            line++; col = 1;
+        } 
+        else if(c == ' ' || c == '\t')
+        {
+            col++;
+        }
+        else
+        {
+            col++;
+            break;
+        }
+    }
+    return c;
+}
 
 //Returns next token for iteration.
-tuple<int,int,int,LexTokenType,string> Lexer::nextToken(int line, int col)
+tuple<int,int,int,LexTokenType,string> Lexer::nextToken()
 {
-
-    return make_tuple(index, line, col, reservedWordsAndSymbols["func"], "func");//LexToken(index,line,col,"func");
+    char c = advance();
+    string lexValue = "hola";
+    
+    while(true)
+    {
+        /*switch(c)
+        {
+            case '\n':
+            case ' ':
+        }*/
+        break;
+    }
+    return make_tuple(index, line, col, reservedWordsAndSymbols["func"], lexValue);
 }
 
 //----------------------------
@@ -99,13 +143,15 @@ tuple<int,int,int,LexTokenType,string> Lexer::nextToken(int line, int col)
 //----------------------------
 void Lexer::createLexerTokens()
 {
-    tuple<int,int,int,LexTokenType,string> next = nextToken(0,0);
+    tuple<int,int,int,LexTokenType,string> next = nextToken();
     srcTokens.push_back(next);
     
     while(get<3>(next) != LexTokenType::EOF_GOOD && get<3>(next) != LexTokenType::EOF_BAD)
     {
-        next = nextToken(get<1>(next), get<2>(next));
+        next = nextToken();
         srcTokens.push_back(next);
+        cout << get<4>(next) << endl;
+        break;
     }
 
     //Handle errors in here
