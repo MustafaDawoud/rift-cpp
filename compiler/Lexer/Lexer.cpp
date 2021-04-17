@@ -50,7 +50,7 @@ unordered_map<string, LexTokenType> Lexer::reservedKeywords =
      {"false", LexTokenType::FALSE}
 };
 
-unordered_map<string, LexTokenType> Lexer::reservedUnaryOpAndSingleSymbols = 
+unordered_map<string, LexTokenType> Lexer::unaryOpAndSingleSymbols = 
      // EOF TOKENS
      {{"\0", LexTokenType::EOF_GOOD},
      
@@ -139,22 +139,62 @@ char Lexer::advance()
     return c;
 }
 
-tuple<int,int,int,LexTokenType,string> Lexer::readString()
+tuple<int,int,int,LexTokenType,string> Lexer::readString(string lexValue)
 {
-
-    return make_tuple(index, line, col, LexTokenType::ERROR, "Next Token Not Found");
+    char c = advance();
+    
+    while(true)
+    {
+        if(isEnd()) { break; }
+        else
+        {
+            lexValue += c;
+            if(c == "\"")
+            {
+                return make_tuple(index, line, col, LexTokenType::STRING_LIT, lexValue);
+            }
+        }
+    }
+    return make_tuple(index, line, col, LexTokenType::ERROR, lexValue);
 }
 
-tuple<int,int,int,LexTokenType,string> Lexer::readDigit()
+tuple<int,int,int,LexTokenType,string> Lexer::readInteger(string lexValue)
 {
+    while(true)
+    {
+        if(isdigit(peek()))
+        {
+            lexValue += advance();
+        }
+        else
+        {
+            return make_tuple(index, line, col, LexTokenType::INT_LIT, lexValue);
+        }
+    }
 
-    return make_tuple(index, line, col, LexTokenType::ERROR, "Next Token Not Found");
+    return make_tuple(index, line, col, LexTokenType::ERROR, lexValue);
 }
 
-tuple<int,int,int,LexTokenType,string> Lexer::readWord()
+tuple<int,int,int,LexTokenType,string> Lexer::readName(string lexValue)
 {
+    while(true)
+    {
+        char p = peek();
+        if ((p >= "A" && p <= "z") || isdigit(p) || p == '_') 
+        {
+            lexValue += advance();
+            if(reservedKeywords.find(lexValue) != reservedKeywords.end())
+            {
+                return make_tuple(index, line, col, reservedKeywords[lexValue], lexValue);
+            }
+        }
+        else
+        {
+            return make_tuple(index, line, col, LexTokenType::ID, lexValue);
+        }
+    }
 
-    return make_tuple(index, line, col, LexTokenType::ERROR, "Next Token Not Found");
+    return make_tuple(index, line, col, LexTokenType::ERROR, lexValue);
 }
 
 //Returns next token for iteration.
@@ -165,9 +205,9 @@ tuple<int,int,int,LexTokenType,string> Lexer::nextToken()
 
     while(true)
     {
-        if(reservedUnaryOpAndSingleSymbols.find(lexValue) != reservedUnaryOpAndSingleSymbols.end())
+        if(unaryOpAndSingleSymbols.find(lexValue) != unaryOpAndSingleSymbols.end())
         {
-            return make_tuple(index, line, col, reservedUnaryOpAndSingleSymbols[lexValue], lexValue);
+            return make_tuple(index, line, col, unaryOpAndSingleSymbols[lexValue], lexValue);
         }
         else if(concatenatableSymbols.find(lexValue) != concatenatableSymbols.end())
         {
@@ -182,20 +222,25 @@ tuple<int,int,int,LexTokenType,string> Lexer::nextToken()
         }
         else if(lexValue == "\"") //string
         {
-            return readString();
+            return readString(lexValue);
         }
-        else if(lexValue == "1") //digit
+        else if(lexValue.length() == 1 && isdigit(lexValue[0])) //digit
         {
-            return readDigit();
+            if(lexValue == "0")
+            {
+                return make_tuple(index, line, col, LexTokenType::ERROR, "Cannot start integer with 0");
+            }
+            return readInteger(lexValue);
         }
-        else if(lexValue == "hi") //identifier or keyword
+        else if(lexValue.length() == 1 && (lexValue == "_" || (lexValue[0] >= "A" && lexValue[0] <= "z"))) //name or keyword
         {
-            return readWord();
+            return readName(lexValue);
         }
         else { break; }
     }
 
-    return make_tuple(index, line, col, LexTokenType::ERROR, "Next Token Not Found");
+    //Generic Error
+    return make_tuple(index, line, col, LexTokenType::ERROR, lexValue);
 }
 
 //----------------------------
@@ -211,7 +256,6 @@ void Lexer::createLexerTokens()
         next = nextToken();
         srcTokens.push_back(next);
         cout << get<4>(next) << endl;
-        break;
     }
 
     //Handle errors in here
