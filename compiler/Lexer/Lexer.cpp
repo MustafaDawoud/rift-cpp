@@ -26,13 +26,8 @@ const vector<tuple<int,int,int,LexTokenType,string>> Lexer::getSrcTokens()
 //Private
 //************************************************************************************************
 
-unordered_map<string, LexTokenType> Lexer::reservedWordsAndSymbols = 
-     // EOF TOKENS
-     {{"\0", LexTokenType::EOF_GOOD},
-     {"ERROR", LexTokenType::ERROR},
-     
-     // KEYWORDS
-     {"func", LexTokenType::FUNC},
+unordered_map<string, LexTokenType> Lexer::reservedKeywords = 
+     {{"func", LexTokenType::FUNC},
      {"struct", LexTokenType::STRUCT},
      {"sig", LexTokenType::SIG},
      {"impl", LexTokenType::IMPL},
@@ -52,8 +47,13 @@ unordered_map<string, LexTokenType> Lexer::reservedWordsAndSymbols =
      {"continue", LexTokenType::CONTINUE},
      {"nil", LexTokenType::NIL},
      {"true", LexTokenType::TRUE},
-     {"false", LexTokenType::FALSE},
+     {"false", LexTokenType::FALSE}
+};
 
+unordered_map<string, LexTokenType> Lexer::reservedUnaryOpAndSingleSymbols = 
+     // EOF TOKENS
+     {{"\0", LexTokenType::EOF_GOOD},
+     
      // SEPARATORS
      {"{", LexTokenType::L_CURLY_BRACE},
      {"}", LexTokenType::R_CURLY_BRACE},
@@ -74,7 +74,7 @@ unordered_map<string, LexTokenType> Lexer::reservedWordsAndSymbols =
      {"!", LexTokenType::NOT}
 };
 
-unordered_map<string, LexTokenType> Lexer::concSymbols = 
+unordered_map<string, LexTokenType> Lexer::concatenatableSymbols = 
      {{"<", LexTokenType::LT},
      {"<=", LexTokenType::LQ},
 
@@ -142,19 +142,19 @@ char Lexer::advance()
 tuple<int,int,int,LexTokenType,string> Lexer::readString()
 {
 
-    return make_tuple(index, line, col, reservedWordsAndSymbols["ERROR"], "Next Token Not Found");
+    return make_tuple(index, line, col, LexTokenType::ERROR, "Next Token Not Found");
 }
 
 tuple<int,int,int,LexTokenType,string> Lexer::readDigit()
 {
 
-    return make_tuple(index, line, col, reservedWordsAndSymbols["ERROR"], "Next Token Not Found");
+    return make_tuple(index, line, col, LexTokenType::ERROR, "Next Token Not Found");
 }
 
-tuple<int,int,int,LexTokenType,string> Lexer::readIdentifier()
+tuple<int,int,int,LexTokenType,string> Lexer::readWord()
 {
 
-    return make_tuple(index, line, col, reservedWordsAndSymbols["ERROR"], "Next Token Not Found");
+    return make_tuple(index, line, col, LexTokenType::ERROR, "Next Token Not Found");
 }
 
 //Returns next token for iteration.
@@ -165,20 +165,20 @@ tuple<int,int,int,LexTokenType,string> Lexer::nextToken()
 
     while(true)
     {
-        if(reservedWordsAndSymbols.find(lexValue) != reservedWordsAndSymbols.end())
+        if(reservedUnaryOpAndSingleSymbols.find(lexValue) != reservedUnaryOpAndSingleSymbols.end())
         {
-            return make_tuple(index, line, col, reservedWordsAndSymbols[lexValue], lexValue);
+            return make_tuple(index, line, col, reservedUnaryOpAndSingleSymbols[lexValue], lexValue);
         }
-        else if(concSymbols.find(lexValue) != concSymbols.end())
+        else if(concatenatableSymbols.find(lexValue) != concatenatableSymbols.end())
         {
             if(lexValue.length() == 1)
             {
-                if(concSymbols.find(lexValue + peek()) != concSymbols.end())
+                if(concatenatableSymbols.find(lexValue + peek()) != concatenatableSymbols.end())
                 {
                     lexValue += advance();
                 }
             }
-            return make_tuple(index, line, col, concSymbols[lexValue], lexValue);
+            return make_tuple(index, line, col, concatenatableSymbols[lexValue], lexValue);
         }
         else if(lexValue == "\"") //string
         {
@@ -188,14 +188,14 @@ tuple<int,int,int,LexTokenType,string> Lexer::nextToken()
         {
             return readDigit();
         }
-        else if(lexValue == "hi") //identifier
+        else if(lexValue == "hi") //identifier or keyword
         {
-            return readIdentifier();
+            return readWord();
         }
         else { break; }
     }
 
-    return make_tuple(index, line, col, reservedWordsAndSymbols["ERROR"], "Next Token Not Found");
+    return make_tuple(index, line, col, LexTokenType::ERROR, "Next Token Not Found");
 }
 
 //----------------------------

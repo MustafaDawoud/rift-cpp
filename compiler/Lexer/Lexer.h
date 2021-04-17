@@ -76,8 +76,9 @@ class Lexer
         int index, line, col;
         string src;
         vector<tuple<int,int,int,LexTokenType,string>> srcTokens; //index, line, col, token type, string value
-        static unordered_map<string, LexTokenType> reservedWordsAndSymbols;
-        static unordered_map<string, LexTokenType> concSymbols;
+        static unordered_map<string, LexTokenType> reservedUnaryOpAndSingleSymbols;
+        static unordered_map<string, LexTokenType> concatenatableSymbols;
+        static unordered_map<string, LexTokenType> reservedKeywords;
 
         //Functions
         void createLexerTokens();
@@ -87,7 +88,7 @@ class Lexer
         tuple<int,int,int,LexTokenType,string> nextToken();
         tuple<int,int,int,LexTokenType,string> readString();
         tuple<int,int,int,LexTokenType,string> readDigit();
-        tuple<int,int,int,LexTokenType,string> readIdentifier();
+        tuple<int,int,int,LexTokenType,string> readWord();
 
     public:
         Lexer(string src);
