@@ -6,9 +6,8 @@
 using namespace std;
 
 enum LexTokenType {
-    //EOF Tokens
     EOF_GOOD,
-    EOF_BAD,
+    ERROR,
 
     // KEYWORDS
     FUNC,
@@ -78,12 +77,17 @@ class Lexer
         string src;
         vector<tuple<int,int,int,LexTokenType,string>> srcTokens; //index, line, col, token type, string value
         static unordered_map<string, LexTokenType> reservedWordsAndSymbols;
+        static unordered_map<string, LexTokenType> concSymbols;
 
         //Functions
-        tuple<int,int,int,LexTokenType,string> nextToken();
         void createLexerTokens();
         bool isEnd();
         char advance();
+        char peek();
+        tuple<int,int,int,LexTokenType,string> nextToken();
+        tuple<int,int,int,LexTokenType,string> readString();
+        tuple<int,int,int,LexTokenType,string> readDigit();
+        tuple<int,int,int,LexTokenType,string> readIdentifier();
 
     public:
         Lexer(string src);

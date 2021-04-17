@@ -28,8 +28,8 @@ const vector<tuple<int,int,int,LexTokenType,string>> Lexer::getSrcTokens()
 
 unordered_map<string, LexTokenType> Lexer::reservedWordsAndSymbols = 
      // EOF TOKENS
-     {{"EOF_GOOD", LexTokenType::EOF_GOOD},
-     {"EOF_BAD", LexTokenType::EOF_BAD},
+     {{"\0", LexTokenType::EOF_GOOD},
+     {"ERROR", LexTokenType::ERROR},
      
      // KEYWORDS
      {"func", LexTokenType::FUNC},
@@ -68,24 +68,43 @@ unordered_map<string, LexTokenType> Lexer::reservedWordsAndSymbols =
      {")", LexTokenType::R_BRACE},
      {".", LexTokenType::DOT},
      {"+", LexTokenType::ADD},
-     {"-", LexTokenType::SUB},
      {"*", LexTokenType::MUL},
      {"/", LexTokenType::DIV},
      {"%", LexTokenType::MOD},
-     {"!", LexTokenType::NOT},
-     {"<", LexTokenType::LT},
+     {"!", LexTokenType::NOT}
+};
+
+unordered_map<string, LexTokenType> Lexer::concSymbols = 
+     {{"<", LexTokenType::LT},
      {"<=", LexTokenType::LQ},
+
      {">", LexTokenType::GT},
      {">=", LexTokenType::GQ},
-     {"==", LexTokenType::EQ},
-     {"!=", LexTokenType::NEQ},
+
      {"&&", LexTokenType::AND},
      {"||", LexTokenType::OR},
+
+     {"==", LexTokenType::EQ},
+     {"!=", LexTokenType::NEQ},
      {"=", LexTokenType::ASSIGN},
+
+     {"-", LexTokenType::SUB},
      {"->", LexTokenType::ARROW}
 };
 
 bool Lexer::isEnd() { return index >= src.length(); }
+
+char Lexer::peek()
+{
+    if(isEnd())
+    {
+        return '\0';
+    }
+    else
+    {
+        return src[index];
+    }
+}
 
 //Character advance
 char Lexer::advance()
@@ -120,22 +139,63 @@ char Lexer::advance()
     return c;
 }
 
+tuple<int,int,int,LexTokenType,string> Lexer::readString()
+{
+
+    return make_tuple(index, line, col, reservedWordsAndSymbols["ERROR"], "Next Token Not Found");
+}
+
+tuple<int,int,int,LexTokenType,string> Lexer::readDigit()
+{
+
+    return make_tuple(index, line, col, reservedWordsAndSymbols["ERROR"], "Next Token Not Found");
+}
+
+tuple<int,int,int,LexTokenType,string> Lexer::readIdentifier()
+{
+
+    return make_tuple(index, line, col, reservedWordsAndSymbols["ERROR"], "Next Token Not Found");
+}
+
 //Returns next token for iteration.
 tuple<int,int,int,LexTokenType,string> Lexer::nextToken()
 {
-    char c = advance();
-    string lexValue = "hola";
-    
+    string lexValue = "";
+    lexValue += advance();
+
     while(true)
     {
-        /*switch(c)
+        if(reservedWordsAndSymbols.find(lexValue) != reservedWordsAndSymbols.end())
         {
-            case '\n':
-            case ' ':
-        }*/
-        break;
+            return make_tuple(index, line, col, reservedWordsAndSymbols[lexValue], lexValue);
+        }
+        else if(concSymbols.find(lexValue) != concSymbols.end())
+        {
+            if(lexValue.length() == 1)
+            {
+                if(concSymbols.find(lexValue + peek()) != concSymbols.end())
+                {
+                    lexValue += advance();
+                }
+            }
+            return make_tuple(index, line, col, concSymbols[lexValue], lexValue);
+        }
+        else if(lexValue == "\"") //string
+        {
+            return readString();
+        }
+        else if(lexValue == "1") //digit
+        {
+            return readDigit();
+        }
+        else if(lexValue == "hi") //identifier
+        {
+            return readIdentifier();
+        }
+        else { break; }
     }
-    return make_tuple(index, line, col, reservedWordsAndSymbols["func"], lexValue);
+
+    return make_tuple(index, line, col, reservedWordsAndSymbols["ERROR"], "Next Token Not Found");
 }
 
 //----------------------------
@@ -146,7 +206,7 @@ void Lexer::createLexerTokens()
     tuple<int,int,int,LexTokenType,string> next = nextToken();
     srcTokens.push_back(next);
     
-    while(get<3>(next) != LexTokenType::EOF_GOOD && get<3>(next) != LexTokenType::EOF_BAD)
+    while(get<3>(next) != LexTokenType::EOF_GOOD && get<3>(next) != LexTokenType::ERROR)
     {
         next = nextToken();
         srcTokens.push_back(next);
@@ -155,7 +215,7 @@ void Lexer::createLexerTokens()
     }
 
     //Handle errors in here
-    if(get<3>(next) == LexTokenType::EOF_BAD)
+    if(get<3>(next) == LexTokenType::ERROR)
     {
         cout << "Something went wrong in lexer" << endl;
     }
