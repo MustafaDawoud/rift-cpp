@@ -149,7 +149,7 @@ tuple<int,int,int,LexTokenType,string> Lexer::readString(string lexValue)
         else
         {
             lexValue += c;
-            if(c == "\"")
+            if(c == '\"')
             {
                 return make_tuple(index, line, col, LexTokenType::STRING_LIT, lexValue);
             }
@@ -180,7 +180,7 @@ tuple<int,int,int,LexTokenType,string> Lexer::readName(string lexValue)
     while(true)
     {
         char p = peek();
-        if ((p >= "A" && p <= "z") || isdigit(p) || p == '_') 
+        if ((p >= 'A' && p <= 'z') || isdigit(p) || p == '_') 
         {
             lexValue += advance();
             if(reservedKeywords.find(lexValue) != reservedKeywords.end())
@@ -200,8 +200,9 @@ tuple<int,int,int,LexTokenType,string> Lexer::readName(string lexValue)
 //Returns next token for iteration.
 tuple<int,int,int,LexTokenType,string> Lexer::nextToken()
 {
+    char c = advance();
     string lexValue = "";
-    lexValue += advance();
+    lexValue += c;
 
     while(true)
     {
@@ -211,28 +212,26 @@ tuple<int,int,int,LexTokenType,string> Lexer::nextToken()
         }
         else if(concatenatableSymbols.find(lexValue) != concatenatableSymbols.end())
         {
-            if(lexValue.length() == 1)
+            lexValue += advance();
+            if(concatenatableSymbols.find(lexValue + peek()) != concatenatableSymbols.end())
             {
-                if(concatenatableSymbols.find(lexValue + peek()) != concatenatableSymbols.end())
-                {
-                    lexValue += advance();
-                }
+                lexValue += advance();
             }
             return make_tuple(index, line, col, concatenatableSymbols[lexValue], lexValue);
         }
-        else if(lexValue == "\"") //string
+        else if(c == '\"') //string
         {
             return readString(lexValue);
         }
-        else if(lexValue.length() == 1 && isdigit(lexValue[0])) //digit
+        else if(isdigit(c)) //digit
         {
-            if(lexValue == "0")
+            if(c == '0')
             {
                 return make_tuple(index, line, col, LexTokenType::ERROR, "Cannot start integer with 0");
             }
             return readInteger(lexValue);
         }
-        else if(lexValue.length() == 1 && (lexValue == "_" || (lexValue[0] >= "A" && lexValue[0] <= "z"))) //name or keyword
+        else if(c == '_' || (c >= 'A' && c <= 'z')) //name or keyword
         {
             return readName(lexValue);
         }
