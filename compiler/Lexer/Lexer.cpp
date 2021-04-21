@@ -122,13 +122,16 @@ char Lexer::advance()
         {
             return '\0';
         }
+
         if(c == '\n')
         {
             line++; col = 1;
-        } 
+            c = src[index++];
+        }
         else if(c == ' ' || c == '\t')
         {
             col++;
+            c = src[index++];
         }
         else
         {
@@ -136,6 +139,7 @@ char Lexer::advance()
             break;
         }
     }
+
     return c;
 }
 
@@ -180,6 +184,7 @@ tuple<int,int,int,LexTokenType,string> Lexer::readName(string lexValue)
     while(true)
     {
         char p = peek();
+        cout << "Lex value: " << lexValue << endl;
         if ((p >= 'A' && p <= 'z') || isdigit(p) || p == '_') 
         {
             lexValue += advance();
@@ -203,6 +208,7 @@ tuple<int,int,int,LexTokenType,string> Lexer::nextToken()
     char c = advance();
     string lexValue = "";
     lexValue += c;
+    cout << c << endl;
 
     while(true)
     {
@@ -233,11 +239,14 @@ tuple<int,int,int,LexTokenType,string> Lexer::nextToken()
         }
         else if(c == '_' || (c >= 'A' && c <= 'z')) //name or keyword
         {
+            cout << "read name" << endl;
             return readName(lexValue);
         }
+        //else if(c == ' ' || c == '\n' || c == '\t'){ continue; }
         else { break; }
     }
 
+    cout << "exiting" << endl;
     //Generic Error
     return make_tuple(index, line, col, LexTokenType::ERROR, lexValue);
 }
@@ -252,9 +261,9 @@ void Lexer::createLexerTokens()
     
     while(get<3>(next) != LexTokenType::EOF_GOOD && get<3>(next) != LexTokenType::ERROR)
     {
+        cout << "Next token returned value: " << get<4>(next) << endl;
         next = nextToken();
         srcTokens.push_back(next);
-        cout << get<4>(next) << endl;
     }
 
     //Handle errors in here
