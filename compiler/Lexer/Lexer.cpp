@@ -48,6 +48,9 @@ unordered_map<string, LexTokenType> Lexer::reservedKeywords =
      {"nil", LexTokenType::NIL},
      {"true", LexTokenType::TRUE},
      {"false", LexTokenType::FALSE}
+
+     //Data types
+     //{"string", LexTokenType::STRING_TYPE}
 };
 
 unordered_map<string, LexTokenType> Lexer::unaryOpAndSingleSymbols = 
@@ -184,7 +187,7 @@ tuple<int,int,int,LexTokenType,string> Lexer::readName(string lexValue)
     while(true)
     {
         char p = peek();
-        cout << "Lex value: " << lexValue << endl;
+        cout << "Lex value: " << lexValue <<" "<< p >= 'A' <<" "<< p <= 'z' <<" "<< isdigit(p) <<" "<< p == '_' << endl;
         if ((p >= 'A' && p <= 'z') || isdigit(p) || p == '_') 
         {
             lexValue += advance();

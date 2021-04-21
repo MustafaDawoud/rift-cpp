@@ -66,6 +66,9 @@ enum LexTokenType {
     INT_LIT,
     STRING_LIT,
     ID
+
+    //Types
+    //STRING_TYPE
 };
 
 class Lexer 
