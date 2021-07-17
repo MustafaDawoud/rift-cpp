@@ -1,2 +1,2 @@
 # rift-cpp
-Writing my first compiler for a language designed by https://github.com/waynee95/riftc-java
+Compiler for a language designed by https://github.com/waynee95/riftc-java
